@@ -92,21 +92,23 @@ GameFactory::GameFactory() {
     // Add models from models.txt to the scene
     // First we set the resources directory
     string resourcedir = "projects/ColladaLoader/data/";
-    ResourceManager::AppendPath(resourcedir);
+    DirectoryManager::AppendPath(resourcedir);
     logger.info << "Resource directory: " << resourcedir << logger.end;
 
     // load the resource plug-ins
-	ResourceManager::AddModelPlugin(new ColladaPlugin());
-    ResourceManager::AddModelPlugin(new OBJPlugin());
-    ResourceManager::AddTexturePlugin(new TGAPlugin());
+	ResourceManager<IModelResource>::AddPlugin(new ColladaPlugin());
+    ResourceManager<IModelResource>::AddPlugin(new OBJPlugin());
+    ResourceManager<ITextureResource>::AddPlugin(new TGAPlugin());
 
-    IModelResourcePtr resource = ResourceManager::CreateModel("Tank.dae");
-    //IModelResourcePtr resource = ResourceManager::CreateModel("model.obj");
+    //IModelResourcePtr resource = ResourceManager<IModelResource>::Create("Tank.dae");
+    IModelResourcePtr resource = ResourceManager<IModelResource>::Create("Tank.obj");
     resource->Load();
     FaceSet* fs = resource->GetFaceSet();
     resource->Unload();
 
     GeometryNode* gn = new GeometryNode(fs);
+    
+    logger.info << "# of triangles: " << fs->Size() << logger.end;
 
     TransformationNode* tn = new TransformationNode();
     

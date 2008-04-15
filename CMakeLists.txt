@@ -34,4 +34,6 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}
   Extensions_SDL
   Extensions_ColladaResource
   Extensions_GenericHandlers
+  Extensions_TGAResource
+  Extensions_OBJResource
 )
