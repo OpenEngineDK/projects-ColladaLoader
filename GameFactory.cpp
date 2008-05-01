@@ -75,7 +75,9 @@ GameFactory::GameFactory() {
     Viewport* viewport = new Viewport(*frame);
 
     // Bind the camera to the viewport
-    camera = new Camera(*(new ViewingVolume()));
+    ViewingVolume *v = new ViewingVolume();
+    camera = new Camera(*v);
+
     viewport->SetViewingVolume(camera);
 
     // Create a renderer.
@@ -96,23 +98,30 @@ GameFactory::GameFactory() {
     logger.info << "Resource directory: " << resourcedir << logger.end;
 
     // load the resource plug-ins
-	ResourceManager<IModelResource>::AddPlugin(new ColladaPlugin());
+    ResourceManager<IModelResource>::AddPlugin(new ColladaPlugin());
     ResourceManager<IModelResource>::AddPlugin(new OBJPlugin());
     ResourceManager<ITextureResource>::AddPlugin(new TGAPlugin());
 
-    //IModelResourcePtr resource = ResourceManager<IModelResource>::Create("Tank.dae");
-    IModelResourcePtr resource = ResourceManager<IModelResource>::Create("Tank.obj");
+    IModelResourcePtr resource = ResourceManager<IModelResource>::Create("Tank.dae");
+    //IModelResourcePtr resource = ResourceManager<IModelResource>::Create("doorway.dae");
+    //IModelResourcePtr resource = ResourceManager<IModelResource>::Create("gun.dae");
+    //IModelResourcePtr resource = ResourceManager<IModelResource>::Create("box_collada_tri.DAE");
+    //IModelResourcePtr resource = ResourceManager<IModelResource>::Create("box_alpha.obj");
+    //IModelResourcePtr resource = ResourceManager<IModelResource>::Create("rock.dae");
+    //IModelResourcePtr resource = ResourceManager<IModelResource>::Create("Tank.obj");
+    //IModelResourcePtr resource = ResourceManager<IModelResource>::Create("texturedCube_tri.dae");
+    //IModelResourcePtr resource = ResourceManager<IModelResource>::Create("FutureTank/model.dae");
+    
     resource->Load();
-    FaceSet* fs = resource->GetFaceSet();
+    ISceneNode* node = resource->GetSceneNode();
     resource->Unload();
 
-    GeometryNode* gn = new GeometryNode(fs);
+    //    GeometryNode* gn = new GeometryNode(fs);
     
-    logger.info << "# of triangles: " << fs->Size() << logger.end;
-
     TransformationNode* tn = new TransformationNode();
+    tn->Move(0,0,-200);
     
-    tn->AddNode(gn);
+    tn->AddNode(node);
     root->AddNode(tn);
 }
 
