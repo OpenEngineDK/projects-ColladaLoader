@@ -13,7 +13,7 @@ SET( PROJECT_SOURCES
 
 # Include needed to use SDL under Mac OS X
 IF(APPLE)
-  SET(PROJECT_SOURCES ${PROJECT_SOURCES} ../../conf/mac/SDLMain.m)
+  SET(PROJECT_SOURCES ${PROJECT_SOURCES} ${SDL_MAIN_FOR_MAC})
 ENDIF(APPLE)
 
 # Project executable
