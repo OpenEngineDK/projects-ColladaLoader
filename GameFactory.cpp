@@ -102,12 +102,12 @@ GameFactory::GameFactory() {
     ResourceManager<IModelResource>::AddPlugin(new OBJPlugin());
     ResourceManager<ITextureResource>::AddPlugin(new TGAPlugin());
 
-    IModelResourcePtr resource = ResourceManager<IModelResource>::Create("Tank.dae");
+    //IModelResourcePtr resource = ResourceManager<IModelResource>::Create("Tank.dae");
     //IModelResourcePtr resource = ResourceManager<IModelResource>::Create("doorway.dae");
     //IModelResourcePtr resource = ResourceManager<IModelResource>::Create("gun.dae");
     //IModelResourcePtr resource = ResourceManager<IModelResource>::Create("box_collada_tri.DAE");
     //IModelResourcePtr resource = ResourceManager<IModelResource>::Create("box_alpha.obj");
-    //IModelResourcePtr resource = ResourceManager<IModelResource>::Create("rock.dae");
+    IModelResourcePtr resource = ResourceManager<IModelResource>::Create("rock.dae");
     //IModelResourcePtr resource = ResourceManager<IModelResource>::Create("Tank.obj");
     //IModelResourcePtr resource = ResourceManager<IModelResource>::Create("texturedCube_tri.dae");
     //IModelResourcePtr resource = ResourceManager<IModelResource>::Create("FutureTank/model.dae");
