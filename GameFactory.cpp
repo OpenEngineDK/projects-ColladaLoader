@@ -26,6 +26,7 @@
 #include <Resources/OBJResource.h>
 #include <Resources/TGAResource.h>
 #include <Display/Camera.h>
+#include <Display/Frustum.h>
 
 // From extensions
 #include <Resources/ColladaResource.h>
@@ -75,7 +76,8 @@ GameFactory::GameFactory() {
     Viewport* viewport = new Viewport(*frame);
 
     // Bind the camera to the viewport
-    ViewingVolume *v = new ViewingVolume();
+    Frustum* v = new Frustum( *(new ViewingVolume()));
+    v->SetNear(10);
     camera = new Camera(*v);
 
     viewport->SetViewingVolume(camera);
@@ -142,7 +144,9 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 
     // Register the handler as a listener on up and down keyboard events.
     MoveHandler* move_h = new MoveHandler(*camera);
-	move_h->RegisterWithEngine(engine);
+	move_h->BindToEventSystem();
+    engine.AddModule(*move_h);
+
     QuitHandler* quit_h = new QuitHandler();
 	quit_h->BindToEventSystem();
 
