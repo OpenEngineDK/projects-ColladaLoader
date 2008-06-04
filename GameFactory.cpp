@@ -10,11 +10,14 @@
 // Class header
 #include "GameFactory.h"
 
+#include "TransformationHandler.h"
+
 // OpenEngine library
 #include <Display/Viewport.h>
 #include <Display/ViewingVolume.h>
 #include <Display/SDLFrame.h>
 #include <Devices/SDLInput.h>
+//#include <Renderers/OpenGL/LightRenderer.h>
 #include <Renderers/OpenGL/Renderer.h>
 #include <Renderers/OpenGL/RenderingView.h>
 #include <Scene/SceneNode.h>
@@ -32,6 +35,9 @@
 #include <Resources/ColladaResource.h>
 #include <Utils/MoveHandler.h>
 #include <Utils/QuitHandler.h>
+#include <Scene/PointLightNode.h>
+#include <Scene/DirectionalLightNode.h>
+
 
 // Additional namespaces (others are in the header).
 using namespace OpenEngine::Devices;
@@ -83,8 +89,8 @@ GameFactory::GameFactory() {
     viewport->SetViewingVolume(camera);
 
     // Create a renderer.
+    //this->renderer = new LightRenderer();
     this->renderer = new Renderer();
-
     // Add a rendering view to the renderer
     renderer->process.Attach(*(new RenderingView(*viewport)));
     
@@ -112,18 +118,36 @@ GameFactory::GameFactory() {
     //IModelResourcePtr resource = ResourceManager<IModelResource>::Create("Tank.obj");
     //IModelResourcePtr resource = ResourceManager<IModelResource>::Create("texturedCube_tri.dae");
     //IModelResourcePtr resource = ResourceManager<IModelResource>::Create("FutureTank/model.dae");
+    //IModelResourcePtr resource = ResourceManager<IModelResource>::Create("swirl.dae");
+    //IModelResourcePtr resource = ResourceManager<IModelResource>::Create("tex.dae");
+    //IModelResourcePtr resource = ResourceManager<IModelResource>::Create("Sahara001/Skybox.dae");
+    //IModelResourcePtr resource = ResourceManager<IModelResource>::Create("TorusWithLight.dae");
+
     
     resource->Load();
     ISceneNode* node = resource->GetSceneNode();
     resource->Unload();
 
-    //    GeometryNode* gn = new GeometryNode(fs);
+    lt = new TransformationNode();
+    PointLightNode* pln = new PointLightNode();
+    DirectionalLightNode* dln = new DirectionalLightNode();
     
+    pln->constAtt = 0.5;
+    pln->linearAtt = 0.001;
+    pln->quadAtt = 0.0001;
+    
+    lt->AddNode(pln);
+    lt->AddNode(dln);
+    lt->Move(0,0,-200);
+
     TransformationNode* tn = new TransformationNode();
     tn->Move(0,0,-200);
-    
     tn->AddNode(node);
+
+    root->AddNode(lt);
     root->AddNode(tn);
+
+
 }
 
 /**
@@ -148,6 +172,10 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 
     QuitHandler* quit_h = new QuitHandler();
 	quit_h->BindToEventSystem();
+
+    TransformationHandler* th = new TransformationHandler(lt);
+    th->BindToEventSystem();
+    engine.AddModule(*th);
 
     // Add some module
     engine.AddModule(*(new OpenEngine::Utils::Statistics(1000)));

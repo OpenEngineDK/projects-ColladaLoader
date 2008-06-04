@@ -17,6 +17,10 @@
 
 // forward declarations
 namespace OpenEngine {
+    namespace Scene {
+        class TransformationNode;
+    }
+
     namespace Display {
         class Camera;
     }
@@ -27,6 +31,8 @@ using namespace OpenEngine::Core;
 using namespace OpenEngine::Display;
 using namespace OpenEngine::Renderers;
 using namespace OpenEngine::Display;
+using namespace OpenEngine::Scene;
+
 /**
  * Game factory definition.
  *
@@ -42,6 +48,7 @@ private:
     IRenderer*   renderer;      // member variable for the engine renderer
 
     Camera* camera;
+    TransformationNode* lt;
 public:
     GameFactory();
     bool         SetupEngine(IGameEngine& engine);
