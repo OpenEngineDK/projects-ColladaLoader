@@ -86,8 +86,7 @@ GameFactory::GameFactory() {
     this->renderer = new Renderer();
 
     // Add a rendering view to the renderer
-    this->renderer->AddRenderingView(new RenderingView(*viewport));
-
+    renderer->process.Attach(*(new RenderingView(*viewport)));
     
     // Create scene root
     SceneNode* root = new SceneNode();
