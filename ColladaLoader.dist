@@ -12,11 +12,15 @@ darcs-dev /projects/ColladaLoader fh.daimi.au.dk:/users/cgd/code/projects/Collad
 dist /extensions/SetupHelpers/SetupHelpers.dist    http://openengine.dk/code/extensions/SetupHelpers/SetupHelpers.dist
 
 # standard set of extensions
+darcs /extensions/SDL             http://openengine.dk/code/extensions/SDL
 darcs /extensions/ColladaResource http://openengine.dk/code/extensions/ColladaResource
 darcs /extensions/SetupHelpers    http://openengine.dk/code/extensions/SetupHelpers
+darcs /extensions/OpenGLSelection http://openengine.dk/code/extensions/OpenGLSelection
 
+darcs-dev /extensions/SDL             fh.daimi.au.dk:/users/cgd/code/extensions/SDL
 darcs-dev /extensions/ColladaResource fh.daimi.au.dk:/users/cgd/code/extensions/ColladaResource
 darcs-dev /extensions/SetupHelpers    fh.daimi.au.dk:/users/cgd/code/extensions/SetupHelpers
+darcs-dev /extensions/OpenGLSelection fh.daimi.au.dk:/users/cgd/code/extensions/OpenGLSelection
 
 # windows libraries
 win32 /libraries http://openengine.dk/data/libraries/boost-win32.zip

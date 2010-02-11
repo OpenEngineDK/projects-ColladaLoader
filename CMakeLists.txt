@@ -7,8 +7,6 @@ SET( PROJECT_NAME "ColladaLoader")
 SET( PROJECT_SOURCES
   # Add all the cpp source files here
   main.cpp
-  GameFactory.cpp
-#  ColladaResource.cpp
 )
 
 # Include needed to use SDL under Mac OS X
@@ -28,13 +26,13 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}
   OpenEngine_Logging
   OpenEngine_Display
   OpenEngine_Devices
-  OpenEngine_Renderers_OpenGL
   OpenEngine_Scene
   OpenEngine_Resources
   # Extension dependencies
   Extensions_SDL
   Extensions_ColladaResource
   Extensions_GenericHandlers
-  Extensions_TGAResource
-  Extensions_OBJResource
+  Extensions_SetupHelpers
+  Extensions_OpenGLSelection
+#  Extensions_AntTweakBar
 )
