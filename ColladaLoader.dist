@@ -5,7 +5,8 @@
 darcs / http://openengine.dk/code/openengine
 
 # ColladaLoader project
-darcs /projects/ColladaLoader http://openengine.dk/code/branches/ColladaLoader
+darcs /projects/ColladaLoader     http://openengine.dk/code/projects/ColladaLoader
+darcs-dev /projects/ColladaLoader fh.daimi.au.dk:/users/cgd/code/projects/ColladaLoader
 
 # dist files
 dist /extensions/SetupHelpers/SetupHelpers.dist    http://openengine.dk/code/extensions/SetupHelpers/SetupHelpers.dist
