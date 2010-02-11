@@ -33,5 +33,5 @@ darwin /libraries http://openengine.dk/data/libraries/Collada-mac.tar.gz
 linux /libraries http://openengine.dk/data/libraries/collada-linux.tar.gz
 
 # data
-any /projects/ColladaLoader/data http://www.daimi.au.dk/~u052178/oe/rock.dae
-any /projects/ColladaLoader/data http://www.daimi.au.dk/~u052178/oe/rock.tga
+any /projects/ColladaLoader/data http://openengine.dk/data/models/rock.dae
+any /projects/ColladaLoader/data http://openengine.dk/data/models/rock.tga
