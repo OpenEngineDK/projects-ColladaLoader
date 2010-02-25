@@ -30,8 +30,9 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}
   OpenEngine_Resources
   # Extension dependencies
   Extensions_SDL
-  Extensions_ColladaResource
+  #  Extensions_ColladaResource
+  Extensions_OpenColladaResource
+  Extensions_GenericHandlers
   Extensions_SetupHelpers
   Extensions_OpenGLSelection
-#  Extensions_AntTweakBar
 )

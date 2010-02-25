@@ -9,17 +9,14 @@ darcs /projects/ColladaLoader     http://openengine.dk/code/projects/ColladaLoad
 darcs-dev /projects/ColladaLoader fh.daimi.au.dk:/users/cgd/code/projects/ColladaLoader
 
 # dist files
-dist /extensions/SetupHelpers/SetupHelpers.dist    http://openengine.dk/code/extensions/SetupHelpers/SetupHelpers.dist
+dist /extensions/SetupHelpers/SetupHelpers.dist			http://openengine.dk/code/extensions/SetupHelpers/SetupHelpers.dist
+dist /extensions/OpenColladaResource/OpenColladaResource.dist   http://openengine.dk/code/extensions/OpenColladaResource/OpenColladaResource.dist
 
 # standard set of extensions
 darcs /extensions/SDL             http://openengine.dk/code/extensions/SDL
-darcs /extensions/ColladaResource http://openengine.dk/code/extensions/ColladaResource
-darcs /extensions/SetupHelpers    http://openengine.dk/code/extensions/SetupHelpers
 darcs /extensions/OpenGLSelection http://openengine.dk/code/extensions/OpenGLSelection
 
 darcs-dev /extensions/SDL             fh.daimi.au.dk:/users/cgd/code/extensions/SDL
-darcs-dev /extensions/ColladaResource fh.daimi.au.dk:/users/cgd/code/extensions/ColladaResource
-darcs-dev /extensions/SetupHelpers    fh.daimi.au.dk:/users/cgd/code/extensions/SetupHelpers
 darcs-dev /extensions/OpenGLSelection fh.daimi.au.dk:/users/cgd/code/extensions/OpenGLSelection
 
 # windows libraries
@@ -30,12 +27,8 @@ win32 /libraries http://openengine.dk/data/libraries/dlls-win32.zip
 win32 /libraries http://openengine.dk/data/libraries/colladadom2.1-win32.zip
 
 # os x libraries
-#darwin /libraries http://openengine.dk/data/libraries/oe-mac-i32-packages.zip
-darwin /libraries http://openengine.dk/data/libraries/Collada-mac.tar.gz
 
 # linux libraries
-linux /libraries http://openengine.dk/data/libraries/collada-linux.tar.gz
 
 # data
-any /projects/ColladaLoader/data http://openengine.dk/data/models/rock.dae
-any /projects/ColladaLoader/data http://openengine.dk/data/models/rock.tga
+any /projects/ColladaLoader/data http://openengine.dk/data/projects/ThirdPersonEater/fish.tar.gz
