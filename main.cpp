@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
     setup->GetScene()->AddNode(root);
 
     // string file = "missile/missile.dae";
-    string file = "fish/models/clownfish.dae";
+    string file = "leopardshark/models/lepord shark.dae";
     if (argc > 1) file = string(argv[1]);
     IModelResourcePtr resource = ResourceManager<IModelResource>::Create(file);
     //IModelResourcePtr resource = ResourceManager<IModelResource>::Create("fish/models/clownfish.dae");
