@@ -2,7 +2,8 @@
 # This file describes the default OpenEngine distribution.
 
 # main repository
-darcs / http://openengine.dk/code/openengine
+darcs / http://openengine.dk/code/branches/BufferObjects
+darcs-dev / fh.daimi.au.dk:/users/cgd/code/branches/BufferObjects
 
 # ColladaLoader project
 darcs /projects/ColladaLoader     http://openengine.dk/code/projects/ColladaLoader
