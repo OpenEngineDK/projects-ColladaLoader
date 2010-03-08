@@ -11,7 +11,7 @@ darcs-dev /projects/ColladaLoader fh.daimi.au.dk:/users/cgd/code/projects/Collad
 
 # dist files
 dist /extensions/SetupHelpers/SetupHelpers.dist			http://openengine.dk/code/extensions/SetupHelpers/SetupHelpers.dist
-dist /extensions/OpenColladaResource/OpenColladaResource.dist   http://openengine.dk/code/extensions/OpenColladaResource/OpenColladaResource.dist
+dist /extensions/OpenColladaResource/OpenColladaResource.dist   http://openengine.dk/code/branches/OpenColladaVBO/OpenColladaResource.dist
 # standard set of extensions
 darcs /extensions/SDL             http://openengine.dk/code/extensions/SDL
 darcs /extensions/OpenGLSelection http://openengine.dk/code/extensions/OpenGLSelection
