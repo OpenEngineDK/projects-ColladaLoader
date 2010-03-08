@@ -33,4 +33,6 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}
   Extensions_OpenColladaResource
   Extensions_SetupHelpers
   Extensions_OpenGLSelection
+  Extensions_Animations
+  Extensions_AssimpResource
 )
