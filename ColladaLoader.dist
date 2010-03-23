@@ -21,7 +21,7 @@ dist /extensions/Assimp/Assimp.dist   http://openengine.dk/code/branches/vbo-ass
 darcs /extensions/SDL             http://openengine.dk/code/extensions/SDL
 darcs /extensions/OpenGLSelection http://openengine.dk/code/extensions/OpenGLSelection
 darcs /extensions/OpenGLRenderer  http://openengine.dk/code/branches/OpenGLRendererVBO
-darcs /extensions/Morphing        http://openengine.dk/code/branches/Morphing
+darcs /extensions/Morphing        http://openengine.dk/code/extensions/Morphing
 
 darcs-dev /extensions/SDL             fh.daimi.au.dk:/users/cgd/code/extensions/SDL
 darcs-dev /extensions/OpenGLSelection fh.daimi.au.dk:/users/cgd/code/extensions/OpenGLSelection
