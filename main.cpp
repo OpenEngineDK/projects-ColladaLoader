@@ -45,7 +45,7 @@
 #include <Scene/PointLightNode.h>
 #include <Scene/DirectionalLightNode.h>
 
-#include <Renderers/BufferObjectBinder.h>
+#include <Renderers/DataBlockBinder.h>
 
 using namespace OpenEngine::Logging;
 using namespace OpenEngine::Core;
@@ -201,7 +201,7 @@ int main(int argc, char** argv) {
     setup->GetRenderer().PostProcessEvent().Attach(*ms);
 
     tl->Load(*root);
-    BufferObjectBinder* bob = new BufferObjectBinder(setup->GetRenderer());
+    DataBlockBinder* bob = new DataBlockBinder(setup->GetRenderer());
     setup->GetRenderer().InitializeEvent().Attach(*bob);
 
     // FPS
