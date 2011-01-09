@@ -30,9 +30,8 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}
   OpenEngine_Resources
   # Extension dependencies
   Extensions_SDL
-  Extensions_OpenColladaResource
+  #Extensions_OpenColladaResource
   Extensions_SetupHelpers
   Extensions_OpenGLSelection
-  Extensions_Animations
   Extensions_AssimpResource
 )
