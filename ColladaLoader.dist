@@ -11,7 +11,6 @@ darcs-dev /projects/ColladaLoader fh.daimi.au.dk:/users/cgd/code/projects/Collad
 
 # dist files
 dist /extensions/SetupHelpers/SetupHelpers.dist			http://openengine.dk/code/extensions/SetupHelpers/SetupHelpers.dist
-dist /extensions/OpenColladaResource/OpenColladaResource.dist   http://openengine.dk/code/extensions/OpenColladaResource/OpenColladaResource.dist
 dist /extensions/Assimp/Assimp.dist   http://openengine.dk/code/extensions/Assimp/Assimp.dist
 
 
@@ -19,17 +18,18 @@ dist /extensions/Assimp/Assimp.dist   http://openengine.dk/code/extensions/Assim
 darcs /extensions/SDL             http://openengine.dk/code/extensions/SDL
 darcs /extensions/OpenGLSelection http://openengine.dk/code/extensions/OpenGLSelection
 darcs /extensions/OpenGLRenderer  http://openengine.dk/code/extensions/OpenGLRenderer
+darcs /extensions/GenericHandlers 	 	http://openengine.dk/code/extensions/GenericHandlers
 
 darcs-dev /extensions/SDL             fh.daimi.au.dk:/users/cgd/code/extensions/SDL
 darcs-dev /extensions/OpenGLSelection fh.daimi.au.dk:/users/cgd/code/extensions/OpenGLSelection
 darcs-dev /extensions/OpenGLRenderer  fh.daimi.au.dk:/users/cgd/code/extensions/OpenGLRenderer
+darcs-dev /extensions/GenericHandlers fh.daimi.au.dk:/users/cgd/code/extensions/GenericHandlers
 
 # windows libraries
 win32 /libraries http://openengine.dk/data/libraries/boost-win32.zip
 win32 /libraries http://openengine.dk/data/libraries/glew-win32.zip
 win32 /libraries http://openengine.dk/data/libraries/sdl-win32.zip
 win32 /libraries http://openengine.dk/data/libraries/dlls-win32.zip
-win32 /libraries http://openengine.dk/data/libraries/colladadom2.1-win32.zip
 
 # os x libraries
 
