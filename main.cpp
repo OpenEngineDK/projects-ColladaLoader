@@ -13,6 +13,7 @@
 #include <Devices/IKeyboard.h>
 #include <Devices/IMouse.h>
 #include <Scene/RenderStateNode.h>
+#include <Utils/SimpleRenderStateHandler.h>
 
 // SimpleSetup
 #include <Utils/SimpleSetup.h>
@@ -86,15 +87,17 @@ int main(int argc, char** argv) {
     // setup->GetRenderer().InitializeEvent().Attach(*tl);
 
     RenderStateNode* root = new RenderStateNode();
-
+    SimpleRenderStateHandler* rsh = new SimpleRenderStateHandler(root);
+    setup->GetKeyboard().KeyEvent().Attach(*rsh);
+    
     Canvas3D* canvas = new Canvas3D(width, height);
     canvas->SetScene(root);
     canvas->SetViewingVolume(setup->GetCamera());
     r->SetCanvas(canvas);
 
     root->EnableOption(RenderStateNode::TEXTURE);
-    // root->EnableOption(RenderStateNode::WIREFRAME);
-    //root->DisableOption(RenderStateNode::BACKFACE);
+    //root->EnableOption(RenderStateNode::WIREFRAME);
+    root->DisableOption(RenderStateNode::BACKFACE);
     //root->DisableOption(RenderStateNode::SHADER);
     root->EnableOption(RenderStateNode::LIGHTING);
     //root->DisableOption(RenderStateNode::LIGHTING);
