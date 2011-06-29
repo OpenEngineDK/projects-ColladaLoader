@@ -10,10 +10,6 @@
 // OpenEngine stuff
 #include <Meta/Config.h>
 #include <Logging/Logger.h>
-#include <Logging/StreamLogger.h>
-#include <Core/Engine.h>
-#include <Renderers/OpenGL/RenderingView.h>
-#include <Display/Camera.h>
 #include <Devices/IKeyboard.h>
 #include <Devices/IMouse.h>
 #include <Scene/RenderStateNode.h>
@@ -38,6 +34,17 @@
 #include <Scene/DirectionalLightNode.h>
 #include <Renderers/DataBlockBinder.h>
 
+#include <Renderers2/OpenGL/GLRenderer.h>
+#include <Renderers2/OpenGL/GLContext.h>
+#include <Display2/Canvas3D.h>
+
+#include <Math/Math.h>
+#include <Utils/BetterMoveHandler.h>
+
+using OpenEngine::Renderers2::OpenGL::GLRenderer;
+using OpenEngine::Renderers2::OpenGL::GLContext;
+using OpenEngine::Display2::Canvas3D;
+
 using namespace OpenEngine::Logging;
 using namespace OpenEngine::Core;
 using namespace OpenEngine::Utils;
@@ -48,12 +55,11 @@ using namespace OpenEngine::Renderers::OpenGL;
 
 int main(int argc, char** argv) {
     
-    //ResourceManager<IModelResource>::AddPlugin(new ColladaPlugin());
     ResourceManager<IModelResource>::AddPlugin(new AssimpPlugin());
-    OpenEngine::Renderers::TextureLoader* tl;
+    // OpenEngine::Renderers::TextureLoader* tl;
 
-    int width = 800;
-    int height = 600;
+    const int width = 800;
+    const int height = 600;
     IEnvironment* env = new SDLEnvironment(width,height);
     SimpleSetup* setup = new SimpleSetup("ColladaLoader", env);
     
@@ -62,22 +68,46 @@ int main(int argc, char** argv) {
     setup->GetRenderer().SetBackgroundColor(Vector<4,float>(.3,.3,.3,1.0));
     setup->AddDataDirectory("projects/ColladaLoader/data/");
 
-    tl = new OpenEngine::Renderers::TextureLoader(setup->GetRenderer());
-    setup->GetRenderer().InitializeEvent().Attach(*tl);
+
+    BetterMoveHandler* mh = new BetterMoveHandler(*setup->GetCamera(), setup->GetMouse());
+    setup->GetEngine().InitializeEvent().Attach(*mh);
+    setup->GetEngine().ProcessEvent().Attach(*mh);
+    setup->GetEngine().DeinitializeEvent().Attach(*mh);
+    setup->GetMouse().MouseMovedEvent().Attach(*mh);
+    setup->GetMouse().MouseButtonEvent().Attach(*mh);
+    setup->GetKeyboard().KeyEvent().Attach(*mh);
+
+    GLContext* ctx = new GLContext();
+    GLRenderer* r = new GLRenderer(ctx);
+    (*((SDLFrame*)&setup->GetFrame())).SetRenderModule(r);
+    setup->GetFrame().SetCanvas(NULL);
+
+    // tl = new OpenEngine::Renderers::TextureLoader(setup->GetRenderer());
+    // setup->GetRenderer().InitializeEvent().Attach(*tl);
 
     RenderStateNode* root = new RenderStateNode();
+
+    Canvas3D* canvas = new Canvas3D(width, height);
+    canvas->SetScene(root);
+    canvas->SetViewingVolume(setup->GetCamera());
+    r->SetCanvas(canvas);
+
     root->EnableOption(RenderStateNode::TEXTURE);
-    //root->EnableOption(RenderStateNode::WIREFRAME);
+    // root->EnableOption(RenderStateNode::WIREFRAME);
     root->DisableOption(RenderStateNode::BACKFACE);
-    root->DisableOption(RenderStateNode::SHADER);
+    // root->DisableOption(RenderStateNode::SHADER);
     root->EnableOption(RenderStateNode::LIGHTING);
     // root->DisableOption(RenderStateNode::COLOR_MATERIAL);
-    delete setup->GetScene();
-    setup->SetScene(*root);
+
+    // delete setup->GetScene();
+    // setup->SetScene(*root);
 
     TransformationNode* lt = new TransformationNode();
-    lt->Move(0,500,0);
+    lt->Move(0, 10000, 0);
+    77lt->Rotate(OpenEngine::Math::PI * 1.25, 0, 0);
     PointLightNode* l = new PointLightNode();
+    //DirectionalLightNode* l = new DirectionalLightNode();
+    l->ambient = Vector<4,float>(1.0);
     lt->AddNode(l);
     root->AddNode(lt);
     // string file = "missile/missile.dae";
@@ -111,9 +141,9 @@ int main(int argc, char** argv) {
     // setup->GetMouse().MouseButtonEvent().Attach(*ms);
     // setup->GetRenderer().PostProcessEvent().Attach(*ms);
 
-    tl->Load(*root);
-    DataBlockBinder* bob = new DataBlockBinder(setup->GetRenderer());
-    bob->Bind(*root);
+    // tl->Load(*root);
+    // DataBlockBinder* bob = new DataBlockBinder(setup->GetRenderer());
+    // bob->Bind(*root);
 
     // FPS
     setup->ShowFPS();

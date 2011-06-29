@@ -34,4 +34,6 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}
   Extensions_SetupHelpers
   Extensions_OpenGLSelection
   Extensions_AssimpResource
+  Extensions_GenericHandlers
+  Extensions_Renderers2
 )

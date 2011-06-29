@@ -18,12 +18,14 @@ dist /extensions/Assimp/Assimp.dist   http://openengine.dk/code/extensions/Assim
 darcs /extensions/SDL             http://openengine.dk/code/extensions/SDL
 darcs /extensions/OpenGLSelection http://openengine.dk/code/extensions/OpenGLSelection
 darcs /extensions/OpenGLRenderer  http://openengine.dk/code/extensions/OpenGLRenderer
-darcs /extensions/GenericHandlers 	 	http://openengine.dk/code/extensions/GenericHandlers
+darcs /extensions/GenericHandlers http://openengine.dk/code/extensions/GenericHandlers
+darcs /extensions/Renderer2 	  http://openengine.dk/code/extensions/Renderer2
 
 darcs-dev /extensions/SDL             fh.daimi.au.dk:/users/cgd/code/extensions/SDL
 darcs-dev /extensions/OpenGLSelection fh.daimi.au.dk:/users/cgd/code/extensions/OpenGLSelection
 darcs-dev /extensions/OpenGLRenderer  fh.daimi.au.dk:/users/cgd/code/extensions/OpenGLRenderer
 darcs-dev /extensions/GenericHandlers fh.daimi.au.dk:/users/cgd/code/extensions/GenericHandlers
+darcs-dev /extensions/Renderer2       fh.daimi.au.dk:/users/cgd/code/extensions/Renderer2
 
 # windows libraries
 win32 /libraries http://openengine.dk/data/libraries/boost-win32.zip
