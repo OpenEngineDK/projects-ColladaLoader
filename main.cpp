@@ -94,20 +94,23 @@ int main(int argc, char** argv) {
 
     root->EnableOption(RenderStateNode::TEXTURE);
     // root->EnableOption(RenderStateNode::WIREFRAME);
-    root->DisableOption(RenderStateNode::BACKFACE);
-    // root->DisableOption(RenderStateNode::SHADER);
+    //root->DisableOption(RenderStateNode::BACKFACE);
+    //root->DisableOption(RenderStateNode::SHADER);
     root->EnableOption(RenderStateNode::LIGHTING);
+    //root->DisableOption(RenderStateNode::LIGHTING);
     // root->DisableOption(RenderStateNode::COLOR_MATERIAL);
 
     // delete setup->GetScene();
     // setup->SetScene(*root);
 
+    r->SetBackgroundColor(RGBAColor(0.5f, 0.5f, 0.5f, 1.0f));
     TransformationNode* lt = new TransformationNode();
-    lt->Move(0, 10000, 0);
-    lt->Rotate(OpenEngine::Math::PI * 1.25, 0, 0);
+    lt->Move(0, 1000, 1000);
+    //lt->Rotate(-45, 0, 45);
     PointLightNode* l = new PointLightNode();
+    l->constAtt = 0.5;
     //DirectionalLightNode* l = new DirectionalLightNode();
-    l->ambient = Vector<4,float>(1.0);
+    l->ambient = Vector<4,float>(0.5);//(0.2, 0.2, 0.3, 1.0) * 2;
     lt->AddNode(l);
     root->AddNode(lt);
     // string file = "missile/missile.dae";
