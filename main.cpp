@@ -37,6 +37,7 @@
 
 #include <Renderers2/OpenGL/GLRenderer.h>
 #include <Renderers2/OpenGL/GLContext.h>
+#include <Resources2/OpenGL/FXAAShader.h>
 #include <Display2/Canvas3D.h>
 
 #include <Math/Math.h>
@@ -44,6 +45,7 @@
 
 using OpenEngine::Renderers2::OpenGL::GLRenderer;
 using OpenEngine::Renderers2::OpenGL::GLContext;
+using OpenEngine::Resources2::OpenGL::FXAAShader;
 using OpenEngine::Display2::Canvas3D;
 
 using namespace OpenEngine::Logging;
@@ -83,6 +85,8 @@ int main(int argc, char** argv) {
     (*((SDLFrame*)&setup->GetFrame())).SetRenderModule(r);
     setup->GetFrame().SetCanvas(NULL);
 
+    FXAAShader* fxaa = new FXAAShader();
+    r->PostProcessEvent().Attach(*fxaa);
     // tl = new OpenEngine::Renderers::TextureLoader(setup->GetRenderer());
     // setup->GetRenderer().InitializeEvent().Attach(*tl);
 
