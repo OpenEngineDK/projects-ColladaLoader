@@ -104,7 +104,7 @@ int main(int argc, char** argv) {
 
     TransformationNode* lt = new TransformationNode();
     lt->Move(0, 10000, 0);
-    77lt->Rotate(OpenEngine::Math::PI * 1.25, 0, 0);
+    lt->Rotate(OpenEngine::Math::PI * 1.25, 0, 0);
     PointLightNode* l = new PointLightNode();
     //DirectionalLightNode* l = new DirectionalLightNode();
     l->ambient = Vector<4,float>(1.0);
