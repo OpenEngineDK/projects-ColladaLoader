@@ -56,6 +56,27 @@ using namespace OpenEngine::Display;
 using namespace OpenEngine::Renderers;
 using namespace OpenEngine::Renderers::OpenGL;
 
+
+
+class CustomHandler : public IListener<OpenEngine::Devices::KeyboardEventArg> {
+private:
+    FXAAShader* fxaa;
+public:
+    CustomHandler(FXAAShader* fxaa) : fxaa(fxaa)  {
+    }
+    virtual ~CustomHandler() {}
+
+    void Handle(KeyboardEventArg arg) {
+        if (arg.type == EVENT_PRESS) {
+            switch(arg.sym) {
+            case KEY_0: fxaa->SetActive(!fxaa->GetActive()); break;
+            default:break;
+            } 
+        }
+    }
+};
+
+
 int main(int argc, char** argv) {
     
     ResourceManager<IModelResource>::AddPlugin(new AssimpPlugin());
@@ -87,6 +108,9 @@ int main(int argc, char** argv) {
 
     FXAAShader* fxaa = new FXAAShader();
     r->PostProcessEvent().Attach(*fxaa);
+    CustomHandler* ch = new CustomHandler(fxaa);
+    setup->GetKeyboard().KeyEvent().Attach(*ch);
+    
     // tl = new OpenEngine::Renderers::TextureLoader(setup->GetRenderer());
     // setup->GetRenderer().InitializeEvent().Attach(*tl);
 
@@ -115,7 +139,7 @@ int main(int argc, char** argv) {
     lt->Move(0, 1000, 1000);
     //lt->Rotate(-45, 0, 45);
     PointLightNode* l = new PointLightNode();
-    l->constAtt = 0.5;
+    l->constAtt = 1.0;
     //DirectionalLightNode* l = new DirectionalLightNode();
     l->ambient = Vector<4,float>(0.5);//(0.2, 0.2, 0.3, 1.0) * 2;
     lt->AddNode(l);
