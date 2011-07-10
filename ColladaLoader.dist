@@ -15,13 +15,13 @@ dist /extensions/Assimp/Assimp.dist   http://openengine.dk/code/extensions/Assim
 
 
 # standard set of extensions
-darcs /extensions/SDL             http://openengine.dk/code/extensions/SDL
-darcs /extensions/OpenGLSelection http://openengine.dk/code/extensions/OpenGLSelection
-darcs /extensions/OpenGLRenderer  http://openengine.dk/code/extensions/OpenGLRenderer
-darcs /extensions/GenericHandlers http://openengine.dk/code/extensions/GenericHandlers
-darcs /extensions/Renderer2 	  http://openengine.dk/code/extensions/Renderer2
+darcs /extensions/FreeImage           http://openengine.dk/code/extensions/FreeImage
+darcs /extensions/OpenGLSelection     http://openengine.dk/code/extensions/OpenGLSelection
+darcs /extensions/OpenGLRenderer      http://openengine.dk/code/extensions/OpenGLRenderer
+darcs /extensions/GenericHandlers     http://openengine.dk/code/extensions/GenericHandlers
+darcs /extensions/Renderer2 	      http://openengine.dk/code/extensions/Renderer2
 
-darcs-dev /extensions/SDL             fh.daimi.au.dk:/users/cgd/code/extensions/SDL
+darcs-dev /extensions/FreeImage       fh.daimi.au.dk:/users/cgd/code/extensions/FreeImage
 darcs-dev /extensions/OpenGLSelection fh.daimi.au.dk:/users/cgd/code/extensions/OpenGLSelection
 darcs-dev /extensions/OpenGLRenderer  fh.daimi.au.dk:/users/cgd/code/extensions/OpenGLRenderer
 darcs-dev /extensions/GenericHandlers fh.daimi.au.dk:/users/cgd/code/extensions/GenericHandlers

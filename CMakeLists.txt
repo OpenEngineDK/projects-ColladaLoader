@@ -31,9 +31,10 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}
   # Extension dependencies
   Extensions_SDL
   #Extensions_OpenColladaResource
-  Extensions_SetupHelpers
+  #Extensions_SetupHelpers
   Extensions_OpenGLSelection
   Extensions_AssimpResource
   Extensions_GenericHandlers
   Extensions_Renderers2
+  Extensions_FreeImage
 )

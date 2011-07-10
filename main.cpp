@@ -14,17 +14,17 @@
 #include <Devices/IMouse.h>
 #include <Scene/RenderStateNode.h>
 #include <Utils/SimpleRenderStateHandler.h>
-
-// SimpleSetup
-#include <Utils/SimpleSetup.h>
+#include <Core/Engine.h>
 #include <Display/SDLEnvironment.h>
 #include <Display/Viewport.h>
-#include <Display/ViewingVolume.h>
+#include <Display/PerspectiveViewingVolume.h>
+#include <Display/Camera.h>
 
 // Resources
 #include <Resources/ResourceManager.h>
-//#include <Resources/ColladaResource.h>
 #include <Resources/AssimpResource.h>
+#include <Resources/FreeImage.h>
+
 // camera tool
 #include <Utils/MouseSelection.h>
 #include <Utils/CameraTool.h>
@@ -43,6 +43,10 @@
 #include <Math/Math.h>
 #include <Utils/BetterMoveHandler.h>
 
+#include <Logging/ColorStreamLogger.h>
+
+
+
 using OpenEngine::Renderers2::OpenGL::GLRenderer;
 using OpenEngine::Renderers2::OpenGL::GLContext;
 using OpenEngine::Resources2::OpenGL::FXAAShader;
@@ -53,8 +57,9 @@ using namespace OpenEngine::Core;
 using namespace OpenEngine::Utils;
 using namespace OpenEngine::Scene;
 using namespace OpenEngine::Display;
-using namespace OpenEngine::Renderers;
-using namespace OpenEngine::Renderers::OpenGL;
+using namespace OpenEngine::Resources;
+using namespace OpenEngine::Renderers2;
+using namespace OpenEngine::Renderers2::OpenGL;
 
 
 
@@ -70,6 +75,7 @@ public:
         if (arg.type == EVENT_PRESS) {
             switch(arg.sym) {
             case KEY_0: fxaa->SetActive(!fxaa->GetActive()); break;
+            case KEY_ESCAPE: exit(0);
             default:break;
             } 
         }
@@ -78,49 +84,54 @@ public:
 
 
 int main(int argc, char** argv) {
-    
-    ResourceManager<IModelResource>::AddPlugin(new AssimpPlugin());
-    // OpenEngine::Renderers::TextureLoader* tl;
 
+    Logger::AddLogger(new ColorStreamLogger(&std::cout));
+    
+    DirectoryManager::AppendPath("projects/ColladaLoader/data/");
+    ResourceManager<IModelResource>::AddPlugin(new AssimpPlugin()); 
+    ResourceManager<ITextureResource>::AddPlugin(new FreeImagePlugin());
+
+    Engine* engine = new Engine();
     const int width = 800;
     const int height = 600;
     IEnvironment* env = new SDLEnvironment(width,height);
-    SimpleSetup* setup = new SimpleSetup("ColladaLoader", env);
+    engine->InitializeEvent().Attach(*env);
+    engine->ProcessEvent().Attach(*env);
+    engine->DeinitializeEvent().Attach(*env);    
     
-    setup->GetCamera()->SetPosition(Vector<3,float>(100,100,100));
-    setup->GetCamera()->LookAt(Vector<3,float>(0,0,0));
-    setup->GetRenderer().SetBackgroundColor(Vector<4,float>(.3,.3,.3,1.0));
-    setup->AddDataDirectory("projects/ColladaLoader/data/");
+    IFrame& frame  = env->CreateFrame();
+    IMouse* mouse  = env->GetMouse();
+    IKeyboard* keyboard = env->GetKeyboard();
+    
+    Camera* cam = new Camera(*(new PerspectiveViewingVolume()));
 
+    cam->SetPosition(Vector<3,float>(100,100,100));
+    cam->LookAt(Vector<3,float>(0,0,0));
 
-    BetterMoveHandler* mh = new BetterMoveHandler(*setup->GetCamera(), setup->GetMouse());
-    setup->GetEngine().InitializeEvent().Attach(*mh);
-    setup->GetEngine().ProcessEvent().Attach(*mh);
-    setup->GetEngine().DeinitializeEvent().Attach(*mh);
-    setup->GetMouse().MouseMovedEvent().Attach(*mh);
-    setup->GetMouse().MouseButtonEvent().Attach(*mh);
-    setup->GetKeyboard().KeyEvent().Attach(*mh);
+    BetterMoveHandler* mh = new BetterMoveHandler(*cam, *mouse);
+    engine->InitializeEvent().Attach(*mh);
+    engine->ProcessEvent().Attach(*mh);
+    engine->DeinitializeEvent().Attach(*mh);
+    mouse->MouseMovedEvent().Attach(*mh);
+    mouse->MouseButtonEvent().Attach(*mh);
+    keyboard->KeyEvent().Attach(*mh);
 
     GLContext* ctx = new GLContext();
     GLRenderer* r = new GLRenderer(ctx);
-    (*((SDLFrame*)&setup->GetFrame())).SetRenderModule(r);
-    setup->GetFrame().SetCanvas(NULL);
+    ((SDLFrame*)(&frame))->SetRenderModule(r);
 
     FXAAShader* fxaa = new FXAAShader();
     r->PostProcessEvent().Attach(*fxaa);
     CustomHandler* ch = new CustomHandler(fxaa);
-    setup->GetKeyboard().KeyEvent().Attach(*ch);
+    keyboard->KeyEvent().Attach(*ch);
     
-    // tl = new OpenEngine::Renderers::TextureLoader(setup->GetRenderer());
-    // setup->GetRenderer().InitializeEvent().Attach(*tl);
-
     RenderStateNode* root = new RenderStateNode();
     SimpleRenderStateHandler* rsh = new SimpleRenderStateHandler(root);
-    setup->GetKeyboard().KeyEvent().Attach(*rsh);
+    keyboard->KeyEvent().Attach(*rsh);
     
     Canvas3D* canvas = new Canvas3D(width, height);
     canvas->SetScene(root);
-    canvas->SetViewingVolume(setup->GetCamera());
+    canvas->SetViewingVolume(cam);
     r->SetCanvas(canvas);
 
     root->EnableOption(RenderStateNode::TEXTURE);
@@ -131,8 +142,6 @@ int main(int argc, char** argv) {
     //root->DisableOption(RenderStateNode::LIGHTING);
     // root->DisableOption(RenderStateNode::COLOR_MATERIAL);
 
-    // delete setup->GetScene();
-    // setup->SetScene(*root);
 
     r->SetBackgroundColor(RGBAColor(0.5f, 0.5f, 0.5f, 1.0f));
     TransformationNode* lt = new TransformationNode();
@@ -141,7 +150,7 @@ int main(int argc, char** argv) {
     PointLightNode* l = new PointLightNode();
     l->constAtt = 1.0;
     //DirectionalLightNode* l = new DirectionalLightNode();
-    l->ambient = Vector<4,float>(0.5);//(0.2, 0.2, 0.3, 1.0) * 2;
+    //l->ambient = Vector<4,float>(0.5);//(0.2, 0.2, 0.3, 1.0) * 2;
     lt->AddNode(l);
     root->AddNode(lt);
     // string file = "missile/missile.dae";
@@ -179,11 +188,8 @@ int main(int argc, char** argv) {
     // DataBlockBinder* bob = new DataBlockBinder(setup->GetRenderer());
     // bob->Bind(*root);
 
-    // FPS
-    setup->ShowFPS();
-
     // Start the engine.
-    setup->GetEngine().Start();
+    engine->Start();
 
     // Return when the engine stops.
     return EXIT_SUCCESS;
