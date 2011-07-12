@@ -45,8 +45,6 @@
 
 #include <Logging/ColorStreamLogger.h>
 
-
-
 using OpenEngine::Renderers2::OpenGL::GLRenderer;
 using OpenEngine::Renderers2::OpenGL::GLContext;
 using OpenEngine::Resources2::OpenGL::FXAAShader;
@@ -63,11 +61,12 @@ using namespace OpenEngine::Renderers2::OpenGL;
 
 
 
-class CustomHandler : public IListener<OpenEngine::Devices::KeyboardEventArg> {
+class CustomHandler : public IListener<KeyboardEventArg> {
 private:
     FXAAShader* fxaa;
+    GLContext* ctx;
 public:
-    CustomHandler(FXAAShader* fxaa) : fxaa(fxaa)  {
+    CustomHandler(FXAAShader* fxaa, GLContext* ctx) : fxaa(fxaa), ctx(ctx)  {
     }
     virtual ~CustomHandler() {}
 
@@ -75,11 +74,17 @@ public:
         if (arg.type == EVENT_PRESS) {
             switch(arg.sym) {
             case KEY_0: fxaa->SetActive(!fxaa->GetActive()); break;
+            case KEY_9: 
+                ctx->ReleaseTextures(); 
+                ctx->ReleaseVBOs(); 
+                ctx->ReleaseShaders(); 
+                logger.info << "Release textures, VBOs, and shaders." << logger.end; break;
             case KEY_ESCAPE: exit(0);
             default:break;
             } 
         }
     }
+
 };
 
 
@@ -122,7 +127,7 @@ int main(int argc, char** argv) {
 
     FXAAShader* fxaa = new FXAAShader();
     r->PostProcessEvent().Attach(*fxaa);
-    CustomHandler* ch = new CustomHandler(fxaa);
+    CustomHandler* ch = new CustomHandler(fxaa, ctx);
     keyboard->KeyEvent().Attach(*ch);
     
     RenderStateNode* root = new RenderStateNode();
