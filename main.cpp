@@ -65,8 +65,9 @@ class CustomHandler : public IListener<KeyboardEventArg> {
 private:
     FXAAShader* fxaa;
     GLContext* ctx;
+    IFrame& frame;
 public:
-    CustomHandler(FXAAShader* fxaa, GLContext* ctx) : fxaa(fxaa), ctx(ctx)  {
+    CustomHandler(FXAAShader* fxaa, GLContext* ctx, IFrame& frame) : fxaa(fxaa), ctx(ctx), frame(frame)  {
     }
     virtual ~CustomHandler() {}
 
@@ -80,7 +81,12 @@ public:
                 ctx->ReleaseShaders(); 
                 logger.info << "Release textures, VBOs, and shaders." << logger.end; break;
             case KEY_ESCAPE: exit(0);
-            default:break;
+            case KEY_f:
+                ctx->ReleaseTextures(); 
+                ctx->ReleaseVBOs(); 
+                ctx->ReleaseShaders();                 
+                frame.ToggleOption(FRAME_FULLSCREEN);                
+           default:break;
             } 
         }
     }
@@ -127,7 +133,7 @@ int main(int argc, char** argv) {
 
     FXAAShader* fxaa = new FXAAShader();
     r->PostProcessEvent().Attach(*fxaa);
-    CustomHandler* ch = new CustomHandler(fxaa, ctx);
+    CustomHandler* ch = new CustomHandler(fxaa, ctx, frame);
     keyboard->KeyEvent().Attach(*ch);
     
     RenderStateNode* root = new RenderStateNode();
