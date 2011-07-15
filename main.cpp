@@ -38,6 +38,7 @@
 #include <Renderers2/OpenGL/GLRenderer.h>
 #include <Renderers2/OpenGL/GLContext.h>
 #include <Resources2/OpenGL/FXAAShader.h>
+#include <Resources2/ShaderResource.h>
 #include <Display2/Canvas3D.h>
 
 #include <Math/Math.h>
@@ -48,6 +49,9 @@
 using OpenEngine::Renderers2::OpenGL::GLRenderer;
 using OpenEngine::Renderers2::OpenGL::GLContext;
 using OpenEngine::Resources2::OpenGL::FXAAShader;
+using OpenEngine::Resources2::ShaderResource;
+using OpenEngine::Resources2::ShaderResourcePtr;
+using OpenEngine::Resources2::ShaderResourcePlugin;
 using OpenEngine::Display2::Canvas3D;
 
 using namespace OpenEngine::Logging;
@@ -58,8 +62,6 @@ using namespace OpenEngine::Display;
 using namespace OpenEngine::Resources;
 using namespace OpenEngine::Renderers2;
 using namespace OpenEngine::Renderers2::OpenGL;
-
-
 
 class CustomHandler : public IListener<KeyboardEventArg> {
 private:
@@ -82,10 +84,10 @@ public:
                 logger.info << "Release textures, VBOs, and shaders." << logger.end; break;
             case KEY_ESCAPE: exit(0);
             case KEY_f:
-                ctx->ReleaseTextures(); 
-                ctx->ReleaseVBOs(); 
-                ctx->ReleaseShaders();                 
-                frame.ToggleOption(FRAME_FULLSCREEN);                
+                ctx->ReleaseTextures();
+                ctx->ReleaseVBOs();
+                ctx->ReleaseShaders();  
+                frame.ToggleOption(FRAME_FULLSCREEN);
            default:break;
             } 
         }
@@ -109,7 +111,14 @@ int main(int argc, char** argv) {
     engine->InitializeEvent().Attach(*env);
     engine->ProcessEvent().Attach(*env);
     engine->DeinitializeEvent().Attach(*env);    
-    
+
+    ShaderResourcePlugin* shaderPlugin = new ShaderResourcePlugin();
+    ResourceManager<ShaderResource>::AddPlugin(shaderPlugin);
+    engine->ProcessEvent().Attach(*shaderPlugin);
+
+    // ShaderResourcePtr shader = ResourceManager<ShaderResource>::Create("extensions/Renderer2/shaders/PhongShader.glsl");
+    // shader->Load();
+
     IFrame& frame  = env->CreateFrame();
     IMouse* mouse  = env->GetMouse();
     IKeyboard* keyboard = env->GetKeyboard();
