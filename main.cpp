@@ -39,12 +39,17 @@
 #include <Renderers2/OpenGL/GLContext.h>
 #include <Resources2/OpenGL/FXAAShader.h>
 #include <Resources2/ShaderResource.h>
+#include <Display2/Canvas2D.h>
 #include <Display2/Canvas3D.h>
+#include <Display2/CompositeCanvas.h>
 
 #include <Math/Math.h>
 #include <Utils/BetterMoveHandler.h>
 
 #include <Logging/ColorStreamLogger.h>
+
+#include <Utils/FPSSurface.h>
+
 
 using OpenEngine::Renderers2::OpenGL::GLRenderer;
 using OpenEngine::Renderers2::OpenGL::GLContext;
@@ -53,6 +58,8 @@ using OpenEngine::Resources2::ShaderResource;
 using OpenEngine::Resources2::ShaderResourcePtr;
 using OpenEngine::Resources2::ShaderResourcePlugin;
 using OpenEngine::Display2::Canvas3D;
+using OpenEngine::Display2::Canvas2D;
+using OpenEngine::Display2::CompositeCanvas;
 
 using namespace OpenEngine::Logging;
 using namespace OpenEngine::Core;
@@ -149,9 +156,16 @@ int main(int argc, char** argv) {
     SimpleRenderStateHandler* rsh = new SimpleRenderStateHandler(root);
     keyboard->KeyEvent().Attach(*rsh);
     
-    Canvas3D* canvas = new Canvas3D(width, height);
-    canvas->SetScene(root);
-    canvas->SetViewingVolume(cam);
+    FPSSurfacePtr fps = FPSSurface::Create();
+    engine->ProcessEvent().Attach(*fps);
+
+    Canvas3D* canvas3D = new Canvas3D(width, height);
+    canvas3D->SetScene(root);
+    canvas3D->SetViewingVolume(cam);
+
+    CompositeCanvas* canvas = new CompositeCanvas(width, height);
+    canvas->AddCanvas(canvas3D, 0, 0);
+    canvas->AddCanvas(new Canvas2D(fps), 10, 10);
     r->SetCanvas(canvas);
 
     root->EnableOption(RenderStateNode::TEXTURE);
