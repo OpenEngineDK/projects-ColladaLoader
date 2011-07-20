@@ -41,6 +41,7 @@
 #include <Resources2/ShaderResource.h>
 #include <Display2/Canvas2D.h>
 #include <Display2/Canvas3D.h>
+#include <Display2/FadeCanvas.h>
 #include <Display2/CompositeCanvas.h>
 #include <Display2/SplitStereoCanvas.h>
 #include <Display2/ColorStereoCanvas.h>
@@ -61,6 +62,7 @@ using OpenEngine::Resources2::ShaderResourcePtr;
 using OpenEngine::Resources2::ShaderResourcePlugin;
 using OpenEngine::Display2::Canvas3D;
 using OpenEngine::Display2::Canvas2D;
+using OpenEngine::Display2::FadeCanvas;
 using OpenEngine::Display2::CompositeCanvas;
 using OpenEngine::Display2::SplitStereoCanvas;
 using OpenEngine::Display2::ColorStereoCanvas;
@@ -207,6 +209,8 @@ int main(int argc, char** argv) {
 
     SplitStereoCanvas* sStereoCanvas = new SplitStereoCanvas(width, height, stereoCam, root);
     ColorStereoCanvas* cStereoCanvas = new ColorStereoCanvas(width, height, stereoCam, root);
+    FadeCanvas* fadeCanvas = new FadeCanvas(width, height);
+    engine->ProcessEvent().Attach(*fadeCanvas);
 
     CompositeCanvas* canvas = new CompositeCanvas(width, height);
     canvas->AddCanvas(canvas3D, 0, 0);
@@ -214,7 +218,8 @@ int main(int argc, char** argv) {
     CompositeCanvas::Container& fpsc = canvas->AddCanvas(new Canvas2D(fps), 20, 20);
     fpsc.color = RGBColor(0.0, 0.20, 0.5);
     fpsc.opacity = 0.5;
-    r->SetCanvas(canvas);
+    r->SetCanvas(fadeCanvas);
+    fadeCanvas->FadeIn(canvas, 1.0f);
     //r->SetCanvas(canvas3D);
     //r->SetCanvas(stereoCanvas);
 
