@@ -149,6 +149,27 @@ public:
 
 
 int main(int argc, char** argv) {
+    int width = 800;
+    int height = 600;
+
+    bool fullscreen = false;
+
+    vector<string> files;
+
+    for (int i=1;i<argc;i++) {
+        if (strcmp(argv[i],"-res") == 0) {
+            if (i + 2 < argc) {
+                width = strtol(argv[i+1], NULL, 10);
+                height = strtol(argv[i+2], NULL, 10);
+            }
+        }
+        else if (strcmp(argv[i],"-fullscreen") == 0) {
+            fullscreen = true;
+        }
+        else {
+            files.push_back(string(argv[i]));
+        }
+    }
 
     Logger::AddLogger(new ColorStreamLogger(&std::cout));
     
@@ -157,8 +178,6 @@ int main(int argc, char** argv) {
     ResourceManager<ITextureResource>::AddPlugin(new FreeImagePlugin());
 
     Engine* engine = new Engine();
-    const int width = 800;
-    const int height = 600;
     IEnvironment* env = new SDLEnvironment(width,height);
     engine->InitializeEvent().Attach(*env);
     engine->ProcessEvent().Attach(*env);
@@ -174,7 +193,9 @@ int main(int argc, char** argv) {
     IFrame& frame  = env->CreateFrame();
     IMouse* mouse  = env->GetMouse();
     IKeyboard* keyboard = env->GetKeyboard();
-    
+
+    if (fullscreen) frame.ToggleOption(FRAME_FULLSCREEN);
+
     StereoCamera* stereoCam = new StereoCamera();
     Camera* cam = new Camera(*stereoCam);
 
@@ -252,20 +273,28 @@ int main(int argc, char** argv) {
     //l->ambient = Vector<4,float>(0.5);//(0.2, 0.2, 0.3, 1.0) * 2;
     lt->AddNode(l);
     root->AddNode(lt);
-    // string file = "missile/missile.dae";
-    string file = "leopardshark/models/lepord shark.dae";
-    if (argc > 1) file = string(argv[1]);
-    IModelResourcePtr resource = ResourceManager<IModelResource>::Create(file);
     TransformationNode* scale = new TransformationNode();
     //scale->SetScale(Vector<3,float>(200,200,200));
     root->AddNode(scale);
-    ISceneNode* node;
-    resource->Load();
-    node = resource->GetSceneNode();
-    resource->Unload();
-    if (node)
-        scale->AddNode(node);
-    else logger.warning << "No scene Loaded." << logger.end;
+
+    if (files.empty()) files.push_back("leopardshark/models/lepord shark.dae");
+
+    for (unsigned int i = 0; i < files.size(); ++i) {
+        try {
+            IModelResourcePtr resource = ResourceManager<IModelResource>::Create(files[i]);
+            
+            ISceneNode* node;
+            resource->Load();
+            node = resource->GetSceneNode();
+            resource->Unload();
+            if (node)
+                scale->AddNode(node);
+            else logger.warning << "File: " << files[i] << " not loaded." << logger.end;
+        }
+        catch (ResourceException e) {
+            logger.warning << "File: " << files[i] << ". " << e.what() << logger.end;
+        }
+    }
 
     //root->AddNode(an);
 
