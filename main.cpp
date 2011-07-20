@@ -161,6 +161,7 @@ int main(int argc, char** argv) {
             if (i + 2 < argc) {
                 width = strtol(argv[i+1], NULL, 10);
                 height = strtol(argv[i+2], NULL, 10);
+                i += 2;
             }
         }
         else if (strcmp(argv[i],"-fullscreen") == 0) {
@@ -186,9 +187,6 @@ int main(int argc, char** argv) {
     ShaderResourcePlugin* shaderPlugin = new ShaderResourcePlugin();
     ResourceManager<ShaderResource>::AddPlugin(shaderPlugin);
     engine->ProcessEvent().Attach(*shaderPlugin);
-
-    // ShaderResourcePtr shader = ResourceManager<ShaderResource>::Create("extensions/Renderer2/shaders/PhongShader.glsl");
-    // shader->Load();
 
     IFrame& frame  = env->CreateFrame();
     IMouse* mouse  = env->GetMouse();
