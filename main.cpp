@@ -42,6 +42,8 @@
 #include <Display2/Canvas2D.h>
 #include <Display2/Canvas3D.h>
 #include <Display2/CompositeCanvas.h>
+#include <Display2/SplitStereoCanvas.h>
+#include <Display2/ColorStereoCanvas.h>
 
 #include <Math/Math.h>
 #include <Utils/BetterMoveHandler.h>
@@ -60,6 +62,9 @@ using OpenEngine::Resources2::ShaderResourcePlugin;
 using OpenEngine::Display2::Canvas3D;
 using OpenEngine::Display2::Canvas2D;
 using OpenEngine::Display2::CompositeCanvas;
+using OpenEngine::Display2::SplitStereoCanvas;
+using OpenEngine::Display2::ColorStereoCanvas;
+using OpenEngine::Display2::StereoCamera;
 
 using namespace OpenEngine::Logging;
 using namespace OpenEngine::Core;
@@ -75,9 +80,26 @@ private:
     FXAAShader* fxaa;
     GLContext* ctx;
     IFrame& frame;
+    GLRenderer* r;
+    OpenEngine::Display2::ICanvas *c1, *c2, *c3;
+    StereoCamera* cam;
 public:
-    CustomHandler(FXAAShader* fxaa, GLContext* ctx, IFrame& frame) : fxaa(fxaa), ctx(ctx), frame(frame)  {
-    }
+    CustomHandler(FXAAShader* fxaa, 
+                  GLContext* ctx, 
+                  IFrame& frame, 
+                  GLRenderer* r, 
+                  OpenEngine::Display2::ICanvas* c1, 
+                  OpenEngine::Display2::ICanvas* c2, 
+                  OpenEngine::Display2::ICanvas* c3,
+                  StereoCamera* cam) 
+  : fxaa(fxaa)
+  , ctx(ctx)
+  , frame(frame)
+  , r(r)
+  , c1(c1)
+  , c2(c2)
+  , c3(c3)
+  , cam(cam) { }
     virtual ~CustomHandler() {}
 
     void Handle(KeyboardEventArg arg) {
@@ -95,7 +117,28 @@ public:
                 ctx->ReleaseVBOs();
                 ctx->ReleaseShaders();  
                 frame.ToggleOption(FRAME_FULLSCREEN);
-           default:break;
+                break;
+            case KEY_F1:
+                r->SetCanvas(c1);
+                logger.info << "No stereo." << logger.end; 
+               break;
+            case KEY_F2:
+                r->SetCanvas(c2);
+                logger.info << "Split screen stereo." << logger.end; 
+                break;
+            case KEY_F3:
+                r->SetCanvas(c3);
+                logger.info << "Red/Blue color stereo." << logger.end; 
+                break;
+            case KEY_KP_PLUS:
+                cam->SetEyeDistance(cam->GetEyeDistance() + 0.1);
+                logger.info << "Eye distance " << cam->GetEyeDistance() << "." <<logger.end; 
+                break;
+            case KEY_KP_MINUS:
+                cam->SetEyeDistance(cam->GetEyeDistance() - 0.1);
+                logger.info << "Eye distance " << cam->GetEyeDistance() << "." <<logger.end; 
+                break;
+          default:break;
             } 
         }
     }
@@ -130,7 +173,8 @@ int main(int argc, char** argv) {
     IMouse* mouse  = env->GetMouse();
     IKeyboard* keyboard = env->GetKeyboard();
     
-    Camera* cam = new Camera(*(new PerspectiveViewingVolume()));
+    StereoCamera* stereoCam = new StereoCamera();
+    Camera* cam = new Camera(*stereoCam);
 
     cam->SetPosition(Vector<3,float>(100,100,100));
     cam->LookAt(Vector<3,float>(0,0,0));
@@ -149,8 +193,6 @@ int main(int argc, char** argv) {
 
     FXAAShader* fxaa = new FXAAShader();
     r->PostProcessEvent().Attach(*fxaa);
-    CustomHandler* ch = new CustomHandler(fxaa, ctx, frame);
-    keyboard->KeyEvent().Attach(*ch);
     
     RenderStateNode* root = new RenderStateNode();
     SimpleRenderStateHandler* rsh = new SimpleRenderStateHandler(root);
@@ -163,10 +205,22 @@ int main(int argc, char** argv) {
     canvas3D->SetScene(root);
     canvas3D->SetViewingVolume(cam);
 
+    SplitStereoCanvas* sStereoCanvas = new SplitStereoCanvas(width, height, stereoCam, root);
+    ColorStereoCanvas* cStereoCanvas = new ColorStereoCanvas(width, height, stereoCam, root);
+
     CompositeCanvas* canvas = new CompositeCanvas(width, height);
     canvas->AddCanvas(canvas3D, 0, 0);
-    canvas->AddCanvas(new Canvas2D(fps), 10, 10);
+    // canvas->AddCanvas(cStereoCanvas, 0, 0);
+    CompositeCanvas::Container& fpsc = canvas->AddCanvas(new Canvas2D(fps), 20, 20);
+    fpsc.color = RGBColor(0.0, 0.20, 0.5);
+    fpsc.opacity = 0.5;
     r->SetCanvas(canvas);
+    //r->SetCanvas(canvas3D);
+    //r->SetCanvas(stereoCanvas);
+
+    CustomHandler* ch = new CustomHandler(fxaa, ctx, frame, r, canvas, sStereoCanvas, cStereoCanvas, stereoCam);
+    keyboard->KeyEvent().Attach(*ch);
+
 
     root->EnableOption(RenderStateNode::TEXTURE);
     //root->EnableOption(RenderStateNode::WIREFRAME);
