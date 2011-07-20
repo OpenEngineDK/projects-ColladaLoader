@@ -203,12 +203,19 @@ int main(int argc, char** argv) {
     FPSSurfacePtr fps = FPSSurface::Create();
     engine->ProcessEvent().Attach(*fps);
 
+    RGBAColor bgc(0.5f, 0.5f, 0.5f, 1.0f);
+
     Canvas3D* canvas3D = new Canvas3D(width, height);
     canvas3D->SetScene(root);
     canvas3D->SetViewingVolume(cam);
+    canvas3D->SetBackgroundColor(bgc);
 
     SplitStereoCanvas* sStereoCanvas = new SplitStereoCanvas(width, height, stereoCam, root);
+    sStereoCanvas->SetBackgroundColor(bgc);
+
     ColorStereoCanvas* cStereoCanvas = new ColorStereoCanvas(width, height, stereoCam, root);
+    cStereoCanvas->SetBackgroundColor(bgc);
+
     FadeCanvas* fadeCanvas = new FadeCanvas(width, height);
     engine->ProcessEvent().Attach(*fadeCanvas);
 
@@ -236,7 +243,6 @@ int main(int argc, char** argv) {
     // root->DisableOption(RenderStateNode::COLOR_MATERIAL);
 
 
-    r->SetBackgroundColor(RGBAColor(0.5f, 0.5f, 0.5f, 1.0f));
     TransformationNode* lt = new TransformationNode();
     lt->Move(0, 1000, 1000);
     //lt->Rotate(-45, 0, 45);
