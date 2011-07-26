@@ -46,6 +46,10 @@
 #include <Display2/SplitStereoCanvas.h>
 #include <Display2/ColorStereoCanvas.h>
 
+#include <Scene/AnimationNode.h>
+#include <Scene/SearchTool.h>
+#include <Animations/Animator.h>
+
 #include <Math/Math.h>
 #include <Utils/BetterMoveHandler.h>
 
@@ -76,6 +80,7 @@ using namespace OpenEngine::Display;
 using namespace OpenEngine::Resources;
 using namespace OpenEngine::Renderers2;
 using namespace OpenEngine::Renderers2::OpenGL;
+using namespace OpenEngine::Animations;
 
 class CustomHandler : public IListener<KeyboardEventArg> {
 private:
@@ -85,6 +90,22 @@ private:
     GLRenderer* r;
     OpenEngine::Display2::ICanvas *c1, *c2, *c3;
     StereoCamera* cam;
+    vector<Animator*> animators;
+
+    void Play(unsigned int i) {
+        if (i < animators.size()) {
+            if (animators[i]->IsPlaying()) {
+                logger.info << "Pausing animation " << i << logger.end;
+                animators[i]->Pause();
+            }
+            else {
+                logger.info << "Playing animation " << i << logger.end;
+                animators[i]->Play();
+            }
+        }
+        else logger.info << "No animation at place " << i << logger.end;
+
+    }
 public:
     CustomHandler(FXAAShader* fxaa, 
                   GLContext* ctx, 
@@ -93,7 +114,8 @@ public:
                   OpenEngine::Display2::ICanvas* c1, 
                   OpenEngine::Display2::ICanvas* c2, 
                   OpenEngine::Display2::ICanvas* c3,
-                  StereoCamera* cam) 
+                  StereoCamera* cam,
+                  vector<Animator*> animators) 
   : fxaa(fxaa)
   , ctx(ctx)
   , frame(frame)
@@ -101,7 +123,8 @@ public:
   , c1(c1)
   , c2(c2)
   , c3(c3)
-  , cam(cam) { }
+  , cam(cam)
+  , animators(animators) { }
     virtual ~CustomHandler() {}
 
     void Handle(KeyboardEventArg arg) {
@@ -121,14 +144,23 @@ public:
                 frame.ToggleOption(FRAME_FULLSCREEN);
                 break;
             case KEY_F1:
+                Play(0);
+                break;
+            case KEY_F2:
+                Play(1);
+                break;
+            case KEY_F3:
+                Play(2);
+                break;
+            case KEY_F10:
                 r->SetCanvas(c1);
                 logger.info << "No stereo." << logger.end; 
                break;
-            case KEY_F2:
+            case KEY_F11:
                 r->SetCanvas(c2);
                 logger.info << "Split screen stereo." << logger.end; 
                 break;
-            case KEY_F3:
+            case KEY_F12:
                 r->SetCanvas(c3);
                 logger.info << "Red/Blue color stereo." << logger.end; 
                 break;
@@ -249,10 +281,6 @@ int main(int argc, char** argv) {
     //r->SetCanvas(canvas3D);
     //r->SetCanvas(stereoCanvas);
 
-    CustomHandler* ch = new CustomHandler(fxaa, ctx, frame, r, canvas, sStereoCanvas, cStereoCanvas, stereoCam);
-    keyboard->KeyEvent().Attach(*ch);
-
-
     root->EnableOption(RenderStateNode::TEXTURE);
     //root->EnableOption(RenderStateNode::WIREFRAME);
     root->DisableOption(RenderStateNode::BACKFACE);
@@ -277,6 +305,9 @@ int main(int argc, char** argv) {
 
     if (files.empty()) files.push_back("leopardshark/models/lepord shark.dae");
 
+    SearchTool st;
+    vector<Animator*> animators;
+
     for (unsigned int i = 0; i < files.size(); ++i) {
         try {
             IModelResourcePtr resource = ResourceManager<IModelResource>::Create(files[i]);
@@ -285,8 +316,18 @@ int main(int argc, char** argv) {
             resource->Load();
             node = resource->GetSceneNode();
             resource->Unload();
-            if (node)
-                scale->AddNode(node);
+            if (node) {
+                AnimationNode* anim = st.DescendantAnimationNode(node);
+                if (anim)  {
+                    Animator* animator = new Animator(anim);
+                    scale->AddNode(animator->GetSceneNode());
+                    animators.push_back(animator);
+                    engine->ProcessEvent().Attach(*animator);
+                    animator->SetActiveAnimation(0);
+                }
+                else scale->AddNode(node);
+
+            }
             else logger.warning << "File: " << files[i] << " not loaded." << logger.end;
         }
         catch (ResourceException e) {
@@ -294,6 +335,12 @@ int main(int argc, char** argv) {
         }
     }
 
+    
+    CustomHandler* ch = new CustomHandler(fxaa, ctx, frame, r, canvas, sStereoCanvas, cStereoCanvas, stereoCam, animators);
+    keyboard->KeyEvent().Attach(*ch);
+
+
+    
     //root->AddNode(an);
 
     // camera tool setup
