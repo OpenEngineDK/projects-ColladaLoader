@@ -58,6 +58,8 @@
 #include <Utils/FPSSurface.h>
 
 
+#include <Resources/Cubemap.h>
+
 using OpenEngine::Renderers2::OpenGL::GLRenderer;
 using OpenEngine::Renderers2::OpenGL::GLContext;
 using OpenEngine::Resources2::OpenGL::FXAAShader;
@@ -82,6 +84,21 @@ using namespace OpenEngine::Renderers2;
 using namespace OpenEngine::Renderers2::OpenGL;
 using namespace OpenEngine::Animations;
 
+class Rotator: public IListener<OpenEngine::Core::ProcessEventArg> {
+private:
+    TransformationNode* node;
+public:
+    bool active;
+    Rotator(TransformationNode* node): node(node), active(false) {}
+    virtual ~Rotator() {};
+
+    void Handle(OpenEngine::Core::ProcessEventArg arg) {
+        if (!active || !node) return;
+        float dt = float(arg.approx) * 1e-6;
+        node->Rotate(0.0, dt * .5, 0.0);
+    }
+};
+
 class CustomHandler : public IListener<KeyboardEventArg> {
 private:
     FXAAShader* fxaa;
@@ -91,6 +108,8 @@ private:
     OpenEngine::Display2::ICanvas *c1, *c2, *c3;
     StereoCamera* cam;
     vector<Animator*> animators;
+
+    Rotator& rotator;
 
     void Play(unsigned int i) {
         if (i < animators.size()) {
@@ -115,7 +134,8 @@ public:
                   OpenEngine::Display2::ICanvas* c2, 
                   OpenEngine::Display2::ICanvas* c3,
                   StereoCamera* cam,
-                  vector<Animator*> animators) 
+                  vector<Animator*> animators,
+                  Rotator& rotator) 
   : fxaa(fxaa)
   , ctx(ctx)
   , frame(frame)
@@ -124,7 +144,8 @@ public:
   , c2(c2)
   , c3(c3)
   , cam(cam)
-  , animators(animators) { }
+  , animators(animators)
+  , rotator(rotator) { }
     virtual ~CustomHandler() {}
 
     void Handle(KeyboardEventArg arg) {
@@ -172,6 +193,9 @@ public:
                 cam->SetEyeDistance(cam->GetEyeDistance() - 0.1);
                 logger.info << "Eye distance " << cam->GetEyeDistance() << "." <<logger.end; 
                 break;
+            case KEY_r:
+                rotator.active = !rotator.active;
+                break;
           default:break;
             } 
         }
@@ -185,7 +209,7 @@ int main(int argc, char** argv) {
     int height = 600;
 
     bool fullscreen = false;
-
+    bool docubemap = true;
     vector<string> files;
 
     for (int i=1;i<argc;i++) {
@@ -199,6 +223,9 @@ int main(int argc, char** argv) {
         else if (strcmp(argv[i],"-fullscreen") == 0) {
             fullscreen = true;
         }
+        else if (strcmp(argv[i],"-nocubemap") == 0) {
+            docubemap = false;
+        }
         else {
             files.push_back(string(argv[i]));
         }
@@ -207,6 +234,8 @@ int main(int argc, char** argv) {
     Logger::AddLogger(new ColorStreamLogger(&std::cout));
     
     DirectoryManager::AppendPath("projects/ColladaLoader/data/");
+    DirectoryManager::AppendPath("resources/");
+
     ResourceManager<IModelResource>::AddPlugin(new AssimpPlugin()); 
     ResourceManager<ITextureResource>::AddPlugin(new FreeImagePlugin());
 
@@ -291,7 +320,7 @@ int main(int argc, char** argv) {
 
 
     TransformationNode* lt = new TransformationNode();
-    lt->Move(0, 1000, 1000);
+    lt->Move(100, 100, 100);
     //lt->Rotate(-45, 0, 45);
     PointLightNode* l = new PointLightNode();
     l->constAtt = 1.0;
@@ -305,8 +334,46 @@ int main(int argc, char** argv) {
 
     if (files.empty()) files.push_back("leopardshark/models/lepord shark.dae");
 
+    Rotator rotator(scale);
+    engine->ProcessEvent().Attach(rotator);
+        
+
     SearchTool st;
     vector<Animator*> animators;
+
+    // cubemap setup BEGIN
+
+    ICubemapPtr cubemap;
+
+    if (docubemap) {
+        cubemap = Cubemap::Create(2048, RGBA, true);
+
+        ITexture2DPtr negx = ResourceManager<ITexture2D>::Create("SaintLazarusChurch/negx.jpg");
+        negx->Load();
+        cubemap->SetPixels(negx, ICubemap::NEGATIVE_X);
+        ITexture2DPtr posx = ResourceManager<ITexture2D>::Create("SaintLazarusChurch/posx.jpg");
+        posx->Load();
+        cubemap->SetPixels(posx, ICubemap::POSITIVE_X);
+
+        ITexture2DPtr negy = ResourceManager<ITexture2D>::Create("SaintLazarusChurch/posy.jpg");
+        negy->Load();
+        cubemap->SetPixels(negy, ICubemap::NEGATIVE_Y);
+        ITexture2DPtr posy = ResourceManager<ITexture2D>::Create("SaintLazarusChurch/negy.jpg");
+        posy->Load();
+        cubemap->SetPixels(posy, ICubemap::POSITIVE_Y);
+
+        ITexture2DPtr negz = ResourceManager<ITexture2D>::Create("SaintLazarusChurch/negz.jpg");
+        negz->Load();
+        cubemap->SetPixels(negz, ICubemap::NEGATIVE_Z);
+        ITexture2DPtr posz = ResourceManager<ITexture2D>::Create("SaintLazarusChurch/posz.jpg");
+        posz->Load();
+        cubemap->SetPixels(posz, ICubemap::POSITIVE_Z);
+
+        ICubemap::GenerateMipmaps(cubemap);
+    }
+    // cubemap setup END
+
+
 
     for (unsigned int i = 0; i < files.size(); ++i) {
         try {
@@ -317,6 +384,14 @@ int main(int argc, char** argv) {
             node = resource->GetSceneNode();
             resource->Unload();
             if (node) {
+                list<MeshNode*> meshes = st.DescendantMeshNodes(node);
+                list<MeshNode*>::iterator it = meshes.begin();
+                for (; it != meshes.end(); ++it) {
+                    MaterialPtr mat = (*it)->GetMesh()->GetMaterial();
+                    if (docubemap)
+                        mat->AddTexture(cubemap, "cubemap");
+                }
+
                 AnimationNode* anim = st.DescendantAnimationNode(node);
                 if (anim)  {
                     Animator* animator = new Animator(anim);
@@ -336,7 +411,7 @@ int main(int argc, char** argv) {
     }
 
     
-    CustomHandler* ch = new CustomHandler(fxaa, ctx, frame, r, canvas, sStereoCanvas, cStereoCanvas, stereoCam, animators);
+    CustomHandler* ch = new CustomHandler(fxaa, ctx, frame, r, canvas, sStereoCanvas, cStereoCanvas, stereoCam, animators, rotator);
     keyboard->KeyEvent().Attach(*ch);
 
 
