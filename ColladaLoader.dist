@@ -39,3 +39,4 @@ win32 /libraries http://openengine.dk/data/libraries/dlls-win32.zip
 
 # data
 any /projects/ColladaLoader/data http://openengine.dk/data/projects/ThirdPersonEater/fish.tar.gz
+any /resources		http://www.openengine.dk/data/images/SaintLazarusChurch.zip
