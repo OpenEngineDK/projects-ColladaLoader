@@ -37,6 +37,7 @@
 
 #include <Renderers2/OpenGL/GLRenderer.h>
 #include <Renderers2/OpenGL/GLContext.h>
+#include <Renderers2/OpenGL/ShadowMap.h>
 #include <Resources2/OpenGL/FXAAShader.h>
 #include <Resources2/ShaderResource.h>
 #include <Display2/Canvas2D.h>
@@ -258,7 +259,7 @@ int main(int argc, char** argv) {
     StereoCamera* stereoCam = new StereoCamera();
     Camera* cam = new Camera(*stereoCam);
 
-    cam->SetPosition(Vector<3,float>(100,100,100));
+    cam->SetPosition(Vector<3,float>(10,10,10));
     cam->LookAt(Vector<3,float>(0,0,0));
 
     BetterMoveHandler* mh = new BetterMoveHandler(*cam, *mouse);
@@ -273,7 +274,17 @@ int main(int argc, char** argv) {
     GLRenderer* r = new GLRenderer(ctx);
     ((SDLFrame*)(&frame))->SetRenderModule(r);
 
+    ShadowMap* shadowmap = new ShadowMap(width, height);
+    r->InitializeEvent().Attach(*shadowmap);
+    r->PostProcessEvent().Attach(*shadowmap);
+    IViewingVolume* shadowView = new PerspectiveViewingVolume(1,300);
+    Camera* shadowCam = new Camera(*(shadowView));
+    shadowCam->SetPosition(Vector<3,float>(10,10,10));
+    shadowCam->LookAt(Vector<3,float>(0,0,0));
+    shadowmap->SetViewingVolume(shadowCam);
+
     FXAAShader* fxaa = new FXAAShader();
+    r->InitializeEvent().Attach(*fxaa);
     r->PostProcessEvent().Attach(*fxaa);
     
     RenderStateNode* root = new RenderStateNode();
@@ -320,7 +331,7 @@ int main(int argc, char** argv) {
 
 
     TransformationNode* lt = new TransformationNode();
-    lt->Move(100, 100, 100);
+    lt->Move(10, 10, 10);
     //lt->Rotate(-45, 0, 45);
     PointLightNode* l = new PointLightNode();
     l->constAtt = 1.0;
@@ -370,6 +381,10 @@ int main(int argc, char** argv) {
         cubemap->SetPixels(posz, ICubemap::POSITIVE_Z);
 
         ICubemap::GenerateMipmaps(cubemap);
+
+        canvas3D->SetSkybox(cubemap);
+        sStereoCanvas->SetSkybox(cubemap);
+        cStereoCanvas->SetSkybox(cubemap);
     }
     // cubemap setup END
 
