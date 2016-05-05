@@ -2,30 +2,30 @@
 # This file describes the default OpenEngine distribution.
 
 # main repository
-darcs / http://openengine.dk/code/openengine
-darcs-dev / fh.daimi.au.dk:/users/cgd/code/openengine
+git / https://github.com/OpenEngineDK/openengine.git
+git-dev / git@github.com:OpenEngineDK/openengine.git
 
 # ColladaLoader project
-darcs /projects/ColladaLoader     http://openengine.dk/code/projects/ColladaLoader
-darcs-dev /projects/ColladaLoader fh.daimi.au.dk:/users/cgd/code/projects/ColladaLoader
+git /projects/ColladaLoader     https://github.com/OpenEngineDK/projects-ColladaLoader.git
+git-dev /projects/ColladaLoader git@github.com:OpenEngineDK/projects-ColladaLoader.git
 
 # dist files
-dist /extensions/SetupHelpers/SetupHelpers.dist			http://openengine.dk/code/extensions/SetupHelpers/SetupHelpers.dist
-dist /extensions/Assimp/Assimp.dist   http://openengine.dk/code/extensions/Assimp/Assimp.dist
+dist /extensions/SetupHelpers/SetupHelpers.dist			https://raw.githubusercontent.com/OpenEngineDK/extensions-SetupHelpers/master/SetupHelpers.dist
+dist /extensions/Assimp/Assimp.dist   https://raw.githubusercontent.com/OpenEngineDK/extensions-Assimp/master/Assimp.dist
 
 
 # standard set of extensions
-darcs /extensions/FreeImage           http://openengine.dk/code/extensions/FreeImage
-darcs /extensions/OpenGLSelection     http://openengine.dk/code/extensions/OpenGLSelection
-darcs /extensions/OpenGLRenderer      http://openengine.dk/code/extensions/OpenGLRenderer
-darcs /extensions/GenericHandlers     http://openengine.dk/code/extensions/GenericHandlers
-darcs /extensions/Renderer2 	      http://openengine.dk/code/extensions/Renderer2
+git /extensions/FreeImage           https://github.com/OpenEngineDK/extensions-FreeImage.git
+git /extensions/OpenGLSelection     https://github.com/OpenEngineDK/extensions-OpenGLSelection.git
+git /extensions/OpenGLRenderer      https://github.com/OpenEngineDK/extensions-OpenGLRenderer.git
+git /extensions/GenericHandlers     https://github.com/OpenEngineDK/extensions-GenericHandlers.git
+git /extensions/Renderer2 	      https://github.com/OpenEngineDK/extensions-Renderer2.git
 
-darcs-dev /extensions/FreeImage       fh.daimi.au.dk:/users/cgd/code/extensions/FreeImage
-darcs-dev /extensions/OpenGLSelection fh.daimi.au.dk:/users/cgd/code/extensions/OpenGLSelection
-darcs-dev /extensions/OpenGLRenderer  fh.daimi.au.dk:/users/cgd/code/extensions/OpenGLRenderer
-darcs-dev /extensions/GenericHandlers fh.daimi.au.dk:/users/cgd/code/extensions/GenericHandlers
-darcs-dev /extensions/Renderer2       fh.daimi.au.dk:/users/cgd/code/extensions/Renderer2
+git-dev /extensions/FreeImage       git@github.com:OpenEngineDK/extensions-FreeImage.git
+git-dev /extensions/OpenGLSelection git@github.com:OpenEngineDK/extensions-OpenGLSelection.git
+git-dev /extensions/OpenGLRenderer  git@github.com:OpenEngineDK/extensions-OpenGLRenderer.git
+git-dev /extensions/GenericHandlers git@github.com:OpenEngineDK/extensions-GenericHandlers.git
+git-dev /extensions/Renderer2       git@github.com:OpenEngineDK/extensions-Renderer2.git
 
 # windows libraries
 win32 /libraries http://openengine.dk/data/libraries/boost-win32.zip
